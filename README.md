@@ -1,1 +1,1 @@
-Raspberry PICO Blinky project with FreeRTOS and a basic GPIO C++ Class
+Raspberry PICO Modbus RTU Master and Slave library using C++ SDK and FreeRTOS
