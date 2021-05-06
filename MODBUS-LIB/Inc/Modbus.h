@@ -288,19 +288,14 @@ modbusHandler_t *mHandlers[MAX_M_HANDLERS];
 
 
 
-/*
+
 void ModbusStart(modbusHandler_t * modH);
+void ModbusInit(modbusHandler_t * modH);
 void setTimeOut( uint16_t u16timeOut); //!<write communication watch-dog timer
 uint16_t getTimeOut(); //!<get communication watch-dog timer value
 bool getTimeOutState(); //!<get communication watch-dog timer state
 void ModbusQuery(modbusHandler_t * modH, modbus_t telegram ); // put a query in the queue tail
 void ModbusQueryInject(modbusHandler_t * modH, modbus_t telegram); //put a query in the queue head
-uint16_t getInCnt(); //!<number of incoming messages
-uint16_t getOutCnt(); //!<number of outcoming messages
-uint16_t getErrCnt(); //!<error counter
-uint8_t getID(); //!<get slave ID between 1 and 247
-uint8_t getState();
-uint8_t getLastError(); //!<get last error message
 void setID( uint8_t u8id ); //!<write new ID for the slave
 void setTxendPinOverTime( uint32_t u32overTime );
 void ModbusEnd(); //!<finish any communication and release serial communication port
@@ -315,14 +310,8 @@ uint8_t RingGetAllBytes(modbusRingBuffer_t *xRingBuffer, uint8_t *buffer); // ge
 uint8_t RingGetNBytes(modbusRingBuffer_t *xRingBuffer, uint8_t *buffer, uint8_t uNumber); // gets uNumber of bytes from ring buffer, returns the actual number of bytes read
 uint8_t RingCountBytes(modbusRingBuffer_t *xRingBuffer); // return the number of available bytes
 void RingClear(modbusRingBuffer_t *xRingBuffer); // flushes the ring buffer
-*/ 
-
-
 
 //Function prototypes for ModbusRingBuffer
-
-void ModbusInit(modbusHandler_t * modH);
-
 void RingAdd(modbusRingBuffer_t *xRingBuffer, uint8_t u8Val); // adds a byte to the ring buffer
 uint8_t RingGetAllBytes(modbusRingBuffer_t *xRingBuffer, uint8_t *buffer); // gets all the available bytes into buffer and return the number of bytes read
 uint8_t RingGetNBytes(modbusRingBuffer_t *xRingBuffer, uint8_t *buffer, uint8_t uNumber); // gets uNumber of bytes from ring buffer, returns the actual number of bytes read
