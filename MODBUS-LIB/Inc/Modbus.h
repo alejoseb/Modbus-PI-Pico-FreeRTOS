@@ -283,11 +283,8 @@ enum
 
 
 
-modbusHandler_t *mHandlers[MAX_M_HANDLERS];
 
-
-
-
+extern modbusHandler_t *mHandlers[MAX_M_HANDLERS];
 
 void ModbusStart(modbusHandler_t * modH);
 void ModbusInit(modbusHandler_t * modH);

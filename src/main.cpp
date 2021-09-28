@@ -124,7 +124,7 @@ initSerial();
 
   //ModbusH.uModbusType = MB_SLAVE;
   ModbusH.uModbusType = MB_MASTER;
-  ModbusH.port = uart0;
+  ModbusH.port = uart1;
   ModbusH.u8id = 0; // For master it must be 0
   ModbusH.u16timeOut = 1000;
   // ModbusH.EN_Port = NULL;
@@ -143,7 +143,7 @@ initSerial();
 
   ModbusH2.uModbusType = MB_SLAVE;
 // ModbusH.uModbusType = MB_MASTER;
-  ModbusH2.port = uart1;
+  ModbusH2.port = uart0;
   ModbusH2.u8id = 1; // For master it must be 0
   ModbusH2.u16timeOut = 1000;
   // ModbusH.EN_Port = NULL;

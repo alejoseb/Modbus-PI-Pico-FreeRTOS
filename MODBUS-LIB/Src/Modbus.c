@@ -13,6 +13,8 @@
 #include "timers.h"
 #include "semphr.h"
 
+
+
 #define GPIO_PIN_RESET 0
 #define GPIO_PIN_SET   1
 
@@ -27,6 +29,7 @@
 #define STACK_SIZE 128 * 4
 
 
+modbusHandler_t *mHandlers[MAX_M_HANDLERS];
 
 uint8_t numberHandlers = 0;
 
