@@ -1083,7 +1083,8 @@ static void sendTxBuffer(modbusHandler_t *modH)
  */
 int8_t process_FC1(modbusHandler_t *modH )
 {
-    uint8_t u8currentRegister, u8currentBit, u8bytesno, u8bitsno;
+    uint16_t u16currentRegister;
+    uint8_t u8currentBit, u8bytesno, u8bitsno;
     uint8_t u8CopyBufferSize;
     uint16_t u16currentCoil, u16coil;
 
@@ -1104,13 +1105,13 @@ int8_t process_FC1(modbusHandler_t *modH )
     for (u16currentCoil = 0; u16currentCoil < u16Coilno; u16currentCoil++)
     {
         u16coil = u16StartCoil + u16currentCoil;
-        u8currentRegister = (uint8_t) (u16coil / 16);
+        u16currentRegister =  (u16coil / 16);
         u8currentBit = (uint8_t) (u16coil % 16);
 
         bitWrite(
         	modH->u8Buffer[ modH->u8BufferSize ],
             u8bitsno,
-		    bitRead( modH->u16regs[ u8currentRegister ], u8currentBit ) );
+		    bitRead( modH->u16regs[ u16currentRegister ], u8currentBit ) );
         u8bitsno ++;
 
         if (u8bitsno > 7)
@@ -1139,15 +1140,15 @@ int8_t process_FC1(modbusHandler_t *modH )
 int8_t process_FC3(modbusHandler_t *modH)
 {
 
-    uint8_t u8StartAdd = word( modH->u8Buffer[ ADD_HI ], modH->u8Buffer[ ADD_LO ] );
+    uint16_t u16StartAdd = word( modH->u8Buffer[ ADD_HI ], modH->u8Buffer[ ADD_LO ] );
     uint8_t u8regsno = word( modH->u8Buffer[ NB_HI ], modH->u8Buffer[ NB_LO ] );
     uint8_t u8CopyBufferSize;
-    uint8_t i;
+    uint16_t i;
 
     modH->u8Buffer[ 2 ]       = u8regsno * 2;
     modH->u8BufferSize         = 3;
 
-    for (i = u8StartAdd; i < u8StartAdd + u8regsno; i++)
+    for (i = u16StartAdd; i < u16StartAdd + u8regsno; i++)
     {
     	modH->u8Buffer[ modH->u8BufferSize ] = highByte(modH->u16regs[i]);
     	modH->u8BufferSize++;
@@ -1170,19 +1171,21 @@ int8_t process_FC3(modbusHandler_t *modH)
  */
 int8_t process_FC5( modbusHandler_t *modH )
 {
-    uint8_t u8currentRegister, u8currentBit;
+    uint8_t u8currentBit;
+    uint16_t u16currentRegister;
     uint8_t u8CopyBufferSize;
     uint16_t u16coil = word( modH->u8Buffer[ ADD_HI ], modH->u8Buffer[ ADD_LO ] );
 
     // point to the register and its bit
-    u8currentRegister = (uint8_t) (u16coil / 16);
+    u16currentRegister = (u16coil / 16);
     u8currentBit = (uint8_t) (u16coil % 16);
 
     // write to coil
     bitWrite(
-    	modH->u16regs[ u8currentRegister ],
+        modH->u16regs[ u16currentRegister ],
         u8currentBit,
 		modH->u8Buffer[ NB_HI ] == 0xff );
+
 
     // send answer to master
     modH->u8BufferSize = 6;
@@ -1203,16 +1206,16 @@ int8_t process_FC5( modbusHandler_t *modH )
 int8_t process_FC6(modbusHandler_t *modH )
 {
 
-    uint8_t u8add = word( modH->u8Buffer[ ADD_HI ], modH->u8Buffer[ ADD_LO ] );
+    uint16_t u16add = word( modH->u8Buffer[ ADD_HI ], modH->u8Buffer[ ADD_LO ] );
     uint8_t u8CopyBufferSize;
     uint16_t u16val = word( modH->u8Buffer[ NB_HI ], modH->u8Buffer[ NB_LO ] );
 
-    modH->u16regs[ u8add ] = u16val;
+    modH->u16regs[ u16add ] = u16val;
 
     // keep the same header
     modH->u8BufferSize = RESPONSE_SIZE;
 
-    u8CopyBufferSize = modH->u8BufferSize +2;
+    u8CopyBufferSize = modH->u8BufferSize + 2;
     sendTxBuffer(modH);
 
     return u8CopyBufferSize;
@@ -1228,7 +1231,8 @@ int8_t process_FC6(modbusHandler_t *modH )
  */
 int8_t process_FC15( modbusHandler_t *modH )
 {
-    uint8_t u8currentRegister, u8currentBit, u8frameByte, u8bitsno;
+    uint8_t u8currentBit, u8frameByte, u8bitsno;
+    uint16_t u16currentRegister;
     uint8_t u8CopyBufferSize;
     uint16_t u16currentCoil, u16coil;
     bool bTemp;
@@ -1237,6 +1241,7 @@ int8_t process_FC15( modbusHandler_t *modH )
     uint16_t u16StartCoil = word( modH->u8Buffer[ ADD_HI ], modH->u8Buffer[ ADD_LO ] );
     uint16_t u16Coilno = word( modH->u8Buffer[ NB_HI ], modH->u8Buffer[ NB_LO ] );
 
+
     // read each coil from the register map and put its value inside the outcoming message
     u8bitsno = 0;
     u8frameByte = 7;
@@ -1244,7 +1249,7 @@ int8_t process_FC15( modbusHandler_t *modH )
     {
 
         u16coil = u16StartCoil + u16currentCoil;
-        u8currentRegister = (uint8_t) (u16coil / 16);
+        u16currentRegister = (u16coil / 16);
         u8currentBit = (uint8_t) (u16coil % 16);
 
         bTemp = bitRead(
@@ -1252,7 +1257,7 @@ int8_t process_FC15( modbusHandler_t *modH )
                     u8bitsno );
 
         bitWrite(
-            modH->u16regs[ u8currentRegister ],
+            modH->u16regs[ u16currentRegister ],
             u8currentBit,
             bTemp );
 
@@ -1283,25 +1288,25 @@ int8_t process_FC15( modbusHandler_t *modH )
  */
 int8_t process_FC16(modbusHandler_t *modH )
 {
-    uint8_t u8StartAdd = modH->u8Buffer[ ADD_HI ] << 8 | modH->u8Buffer[ ADD_LO ];
-    uint8_t u8regsno = modH->u8Buffer[ NB_HI ] << 8 | modH->u8Buffer[ NB_LO ];
+    uint16_t u16StartAdd = modH->u8Buffer[ ADD_HI ] << 8 | modH->u8Buffer[ ADD_LO ];
+    uint16_t u16regsno = modH->u8Buffer[ NB_HI ] << 8 | modH->u8Buffer[ NB_LO ];
     uint8_t u8CopyBufferSize;
-    uint8_t i;
+    uint16_t i;
     uint16_t temp;
 
     // build header
     modH->u8Buffer[ NB_HI ]   = 0;
-    modH->u8Buffer[ NB_LO ]   = u8regsno;
+    modH->u8Buffer[ NB_LO ]   = (uint8_t) u16regsno; // answer is always 256 or less bytes
     modH->u8BufferSize         = RESPONSE_SIZE;
 
     // write registers
-    for (i = 0; i < u8regsno; i++)
+    for (i = 0; i < u16regsno; i++)
     {
         temp = word(
         		modH->u8Buffer[ (BYTE_CNT + 1) + i * 2 ],
 				modH->u8Buffer[ (BYTE_CNT + 2) + i * 2 ]);
 
-        modH->u16regs[ u8StartAdd + i ] = temp;
+        modH->u16regs[ u16StartAdd + i ] = temp;
     }
     u8CopyBufferSize = modH->u8BufferSize +2;
     sendTxBuffer(modH);
